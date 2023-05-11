@@ -1,13 +1,19 @@
 import React, { useState, useEffect, useContext } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import { ItemContext } from "../../App";
 import { counterContext } from "../../App";
-
+import "./Context.css";
 import Products from "../JsonFiels/Products.json";
 
 export default function Content() {
-  const {counter , setCounter} = useContext(counterContext)
+  const [abc, setAbc] = useState(Products);
+
+  const navigate = useNavigate();
+
+  const { counter, setCounter } = useContext(counterContext);
 
   const { item, setItem } = useContext(ItemContext);
   const [timeLeft, setTimeLeft] = useState(18000);
@@ -44,10 +50,60 @@ export default function Content() {
     const updatedItems = [...storedItems, selectedProduct];
 
     setItem(() => [...updatedItems]);
-    
+
     localStorage.setItem("newItem", JSON.stringify(updatedItems));
-    setCounter(counter + 1)
-    
+    setCounter(counter + 1);
+  }
+  const categories = [
+    {
+      name: "Writing Instruments",
+      imageSrc: "./Images/writing.png",
+      category: "writing-instruments",
+    },
+    {
+      name: "Paper Products",
+      imageSrc: "./Images/PaperProduct.png",
+      category: "paper-products",
+    },
+    {
+      name: "Desk Accessories",
+      imageSrc: "./Images/Desk Accessories.png",
+      category: "desk-accessories",
+    },
+    {
+      name: "Art Supplies",
+      imageSrc: "./Images/Art Supplies.png",
+      category: "art-supplies",
+    },
+    {
+      name: "School Supplies",
+      imageSrc: "./Images/School Supplies.png",
+      category: "school-supplies",
+    },
+    {
+      name: "Presentation",
+      imageSrc: "./Images/Presentation Supplies.png",
+      category: "Presentation",
+    },
+    {
+      name: "Calendars and Planners",
+      imageSrc: "./Images/Calendars and Planners.png",
+      category: "calendars-planers",
+    },
+    {
+      name: "Filing and Organization",
+      imageSrc: "./Images/Filing and Organization.png",
+      category: "filing-organization",
+    },
+  ];
+  function filterAndNavigate(categoryName) {
+    const filteredCategory = Products.filter(
+      (product) => product.category === categoryName
+    );
+
+    setAbc(filteredCategory.length > 2 ? filteredCategory : Products);
+
+    navigate(`/productsPage/${categoryName}`);
   }
 
   return (
@@ -64,67 +120,21 @@ export default function Content() {
         now for high-quality products, competitive prices, and fast shipping.
       </p>
       <div className="landing-categories">
-        {/* <Link to={`/productsPage/${category.id}`}>
-          {" "}
-          {category.name} */}
-        <div className="categories-card">
-          <div className="image-category-container">
-            <img src="./Images/writing.png" />
-          </div>
-          <br />
-          <p className="text-center pb-5">Writing Instruments</p>
-        </div>
-        {/* </Link> */}
-
-        <div className="categories-card">
-          <div className="image-category-container">
-            <img src="./Images/PaperProduct.png" />
-          </div>
-          <br />
-          <p className="text-center pb-5">Paper Products</p>
-        </div>
-        <div className="categories-card">
-          <div className="image-category-container">
-            <img src="./Images/Desk Accessories.png" />
-          </div>
-          <br />
-          <p className="text-center pb-5">Desk Accessories</p>
-        </div>
-        <div className="categories-card">
-          <div className="image-category-container">
-            <img src="./Images/Art Supplies.png" />
-          </div>
-          <br />
-          <p className="text-center pb-5">Art Supplies</p>
-        </div>
-        <div className="categories-card">
-          <div className="image-category-container">
-            <img src="./Images/School Supplies.png" />
-          </div>
-          <br />
-          <p className="text-center pb-5">School Supplies</p>
-        </div>
-        <div className="categories-card">
-          <div className="image-category-container">
-            <img src="./Images/Presentation Supplies.png" />
-          </div>
-          <br />
-          <p className="text-center pb-5">Presentation Supplies</p>
-        </div>
-        <div className="categories-card">
-          <div className="image-category-container">
-            <img src="./Images/Calendars and Planners.png" />
-          </div>
-          <br />
-          <p className="text-center pb-5">Calendars and Planners</p>
-        </div>
-        <div className="categories-card">
-          <div className="image-category-container">
-            <img src="./Images/Filing and Organization.png" />
-          </div>
-          <br />
-          <p className="text-center pb-5">Filing and Organization</p>
-        </div>
+        {categories.map((category) => (
+          <Link to={`/productsPage/${category.name}`}>
+            <div
+              key={category.category}
+              className="categories-card"
+              onClick={() => filterAndNavigate(category.name)}
+            >
+              <div className="image-category-container">
+                <img src={category.imageSrc} alt={category.name} />
+              </div>
+              <br />
+              <p className="text-center pb-5">{category.name}</p>
+            </div>
+          </Link>
+        ))}
       </div>
       <div className="sales-container">
         <div className="flex justify-around ">
@@ -137,9 +147,59 @@ export default function Content() {
         </div>
         <div className="flash-sale">
           {salePriceCards.map((product, index) => (
+            // <div
+            //   key={index}
+            //   className="w-full md:w-1/3 xl:w-1/5 p-6 flex flex-col bg-primary m-5 rounded-md"
+            // >
+            //   <a href="#">
+            //     <img
+            //       id={product.id}
+            //       onClick={AddToCart}
+            //       className="hover:grow hover:shadow-lg"
+            //       src={product.img}
+            //       style={{ height: "200px", width: "100%" }}
+            //     />
+            //     <div className="flex items-center mt-5 justify-between">
+            //       <p className="">{product.title}</p>
+            //       <p className="ml-20  text-gray-900">{product.price} JD</p>
+            //     </div>
+
+            //     <div className="flex flex-wrap gap-2 justify-around mt-3">
+            //       <button
+            //         className="btn btn-outline "
+            //         id={product.id}
+            //         onClick={AddToCart}
+            //       >
+            //         Add to cart
+            //         <svg
+            //           xmlns="http://www.w3.org/2000/svg"
+            //           fill="none"
+            //           viewBox="0 0 24 24"
+            //           stroke-width="1.5"
+            //           stroke="currentColor"
+            //           class="file: ml-2 h-6 w-6"
+            //         >
+            //           <path
+            //             stroke-linecap="round"
+            //             stroke-linejoin="round"
+            //             d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+            //           />
+            //         </svg>
+            //       </button>
+            //       <button
+            //         className="btn btn-outline-blue"
+            //         id={product.id}
+            //         onClick={AddToCart}
+            //       >
+            //         {" "}
+            //         Details
+            //       </button>
+            //     </div>
+            //   </a>
+            // </div>
             <div
               key={index}
-              className="sale-card w-1/2 md:w-1/3  p-6 flex flex-col bg-primary m-5 rounded-md"
+              className=" w-full md:w-1/3 sm:w-1/2 xl:w-1/6 flex-wrap p-6 flex flex-col bg-primary m-5 rounded-md"
             >
               <div className="discount-badge">
                 <svg
@@ -169,31 +229,35 @@ export default function Content() {
                     {product.price}JD
                   </span>
                 </p>
-                <button
-                  className="btn btn-outline mt-3"
-                  id={product.id}
-                  onClick={AddToCart}
-                >
-                  Add to cart
-                </button>
+                <div className="flex justify-center">
+                  <button
+                    className="btn btn-sm  btn-outline  mt-3 text-[12px]"
+                    id={product.id}
+                    // style={{ height: "15px" }}
+
+                    onClick={AddToCart}
+                  >
+                    Add to cart
+                  </button>
+                </div>
               </a>
             </div>
           ))}
         </div>
       </div>
-      <div className="featured-products">
-        <div>
+      <div className="p-10 flex text-black flex-wrap flex-col justify-center items-center bg-color-black bg-[#f5f2f2]	 ">
+        <div className="w-1/2 flex flex-col justify-center">
           <h1 className="text-4xl">
             <b>Featured Products</b>
           </h1>
           <br />
-          <p className="w-1/2">
+          <p className="w-2/3">
             Problems trying to resolve the conflict between the two major realms
             of Classical physics: Newtonian mechanics{" "}
           </p>
           <br />
         </div>
-        <div className="featured-products-cards">
+        <div className="featured-products-cards w-1/2 flex flex-col">
           <div
             className="featured-prodoct-card p-5
           "
